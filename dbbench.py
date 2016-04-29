@@ -9,7 +9,6 @@ from tempfile import NamedTemporaryFile
 
 logger = logging.getLogger(__name__)
 
-
 def humanize_us(micros):
     for (fmt, scale) in [('%.3fh', 60*60*1000000.0), ('%.3fm', 60*1000000.0),
                          ('%.3fs', 1000000.0), ('%.3fms', 1000.0),
@@ -106,3 +105,29 @@ def RunDbbench(dbspec, configFileName, basedir=None):
         subprocess.check_output(command, stderr=subprocess.STDOUT)
 
         return [QueryStatistic(*row) for row in csv.reader(statsFile)]
+
+def EnsureDbbenchInPath():
+    "Ensure that dbbench is in the PATH"
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
+    if not any(os.access(os.path.join(path, 'dbbench'), os.X_OK) for path in
+       os.environ["PATH"].split(os.pathsep)):
+        logging.warning("No dbbench found in PATH, adding %s to the PATH",
+                        cur_dir)
+        os.environ['PATH'] += os.pathsep + cur_dir
+
+
+def CleanQuery(query):
+    #
+    # Strip -- style comments but not /* */ style comments, as the latter
+    # are sometimes used for version specific logic.
+    #
+    query = " ".join(
+        re.sub(r"--.*$", "", l) for l in query.split("\n")
+    )
+
+    # Strip unnecessary whitespace.
+    query = re.sub(r"(^ +)|( +$)", "", query)
+    query = re.sub(r" +", " ", query)
+    return query
+
+
