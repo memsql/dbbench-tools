@@ -1,5 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#
+# Copyright (c) 2016 by MemSQL. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 import argparse
 import logging
@@ -102,17 +117,27 @@ def MakeChart(args, axis_label, labels, allQueryStatistics):
     for queryStatistics in allQueryStatistics:
         latencies.append(
             [qs.elapsedMicros / 1000000.0 for qs in queryStatistics])
-        tps.append(len(queryStatistics) / args.duration)
+        tps.append(sum(qs.rowsAffected for qs in queryStatistics) / args.duration)
 
     plt.subplot(2, 1, 1)
-    plt.boxplot(latencies)
+    bp = plt.boxplot(latencies, patch_artist=True)
+    for box in bp['boxes']:
+        box.set(color='#175581')
+    for whisker in bp['whiskers']:
+        whisker.set(color='#131b43')
+    for cap in bp['caps']:
+        cap.set(color='#131b43')
+    for median in bp['medians']:
+        median.set(color='#ff6900')
+    for flier in bp['fliers']:
+        flier.set(color='#131b43')
     plt.ylabel("Latency (seconds)")
     plt.xticks(range(1, len(labels)+1), labels)
 
     plt.subplot(2, 1, 2)
-    plt.bar([i+.1 for i in xrange(len(tps))], tps, width=0.8)
+    plt.bar([i+.1 for i in xrange(len(tps))], tps, width=0.8, color='#175581')
     plt.xlabel(axis_label)
-    plt.ylabel("TPS")
+    plt.ylabel("Rows per Second (RPS)")
     plt.xticks([i+.5 for i in xrange(len(labels))], labels)
 
     if args.output:
