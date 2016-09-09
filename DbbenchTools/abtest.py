@@ -30,7 +30,7 @@ from tempfile import NamedTemporaryFile
 
 from dbbench import RunDbbench, DatabaseSpec, QueryStatistic, EnsureDbbenchInPath, CleanQuery
 
-import statstest
+import abstats
 
 logger = logging.getLogger(__name__)
 
@@ -141,8 +141,8 @@ def DoQuery(args, A_dbspec, B_dbspec, query):
     aExecutions = [float(s.elapsedMicros) / 1000.0 for s in aStats]
     bExecutions = [float(s.elapsedMicros) / 1000.0 for s in bStats]
 
-    return statstest.DoTest(args, args.B_name, bExecutions,
-                            args.A_name, aExecutions, unit="ms")
+    return abstats.DoTest(args, args.B_name, bExecutions,
+                          args.A_name, aExecutions, unit="ms")
 
 def main():
     EnsureDbbenchInPath()
@@ -196,7 +196,7 @@ def main():
                     action="store_false")
     parser.set_defaults(fatal_dbbench_errors=True)
 
-    statstest.AddStatsOptions(parser)
+    abstats.AddStatsOptions(parser)
 
     parser.add_argument("--iterations", type=int, default=30,
                         help="Number of iterations to perform for each test.")

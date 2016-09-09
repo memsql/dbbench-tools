@@ -51,20 +51,20 @@ except ImportError:
 
 setup(
     name='dbbench_tools',
-    version='0.0.2',
+    version='0.0.3',
     description='A collection of tools for interacting with dbbench',
     long_description=readme(),
     author='Alex Reece',
     author_email='awreece' '@' 'gmail.com',
     license='Apache License',
     install_requires=[
-        'matplotlib==1.4.3',
+        'matplotlib',
         'scipy',
-        'blessed==1.14.1',
+        'blessed',
         'jinja2',
     ],
     packages=['DbbenchTools'],
-    py_modules=['dbbench'],
+    py_modules=['dbbench', 'abstats'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
