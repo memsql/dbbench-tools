@@ -26,6 +26,9 @@ import time
 
 from tempfile import NamedTemporaryFile
 
+
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 from dbbench import RunDbbench, DatabaseSpec, humanize_count, humanize_us
