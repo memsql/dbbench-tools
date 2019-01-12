@@ -96,7 +96,7 @@ def RunTest(args, param, level):
                 return []
 
         if args.reported_job:
-            ret = [qs for qs in data if qs.name == args.reported_job]
+            ret = [qs for qs in ret if qs.name == args.reported_job]
 
         matched_jobs = set(qs.name for qs in ret)
         if len(matched_jobs) == 0:
